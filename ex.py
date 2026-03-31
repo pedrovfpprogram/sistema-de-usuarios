@@ -77,6 +77,7 @@ def editar_users():
     usuarios = cursor.fetchall()
     if not usuarios:
         print("\nNão há usuários no banco de dados!")
+        return
     ID = int(input("Digite o id do usuário para editá-lo: "))
     cursor.execute('SELECT * FROM usuarios WHERE id = ?',[ID])
     for item in cursor.fetchall():
@@ -102,6 +103,7 @@ def remove_users():
     usuarios = cursor.fetchall()
     if not usuarios:
         print("\nNão há usuários no banco de dados!")
+        return
     ID = int(input("Digite o id do usuário para excluí-lo: "))
     cursor.execute('SELECT * FROM usuarios WHERE id = ?',[ID])
     resultado = cursor.fetchall()
