@@ -10,6 +10,14 @@ CREATE TABLE IF NOT EXISTS usuarios(
     idade INTEGER NOT NULL,
     email TEXT NOT NULL UNIQUE,
     telefone TEXT NOT NULL UNIQUE DEFAULT 0)''')
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS pedidos(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    descricao TEXT NOT NULL,
+    valor REAL NOT NULL,
+    usuario_id INTEGER,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios (id)
+    )''')
 def add_users():
     while True:
         nome = input("Digite um nome(deixe vazio para encerrar o cadastro): ")
