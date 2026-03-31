@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS usuarios(
     nome TEXT NOT NULL,
     idade INTEGER NOT NULL,
     email TEXT NOT NULL UNIQUE,
-    telefone TEXT NOT NULL UNIQUE DEFAULT 0)''')
+    telefone TEXT NOT NULL UNIQUE DEFAULT 'SEM TELEFONE')''')
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS pedidos(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -26,8 +26,9 @@ def add_users():
         else:
             idade = int(input("Digite a idade: "))
             email = input("Digite um email: ")
+            telefone = input('Digite um telefone: ')
             try:
-                cursor.execute('INSERT INTO usuarios (nome,idade,email) VALUES (?,?,?)',(nome,idade,email))
+                cursor.execute('INSERT INTO usuarios (nome,idade,email,telefone) VALUES (?,?,?,?)',(nome,idade,email,telefone))
                 print('Usuário cadastrado com sucesso!')
             except:
                 print('Email já está no sistema!')
@@ -135,6 +136,18 @@ Telefone: {telefone}\n''')
         print('Operação cancelada com sucesso!\n')
         return
     conexao.commit()
+def add_pedido():
+    cursor.execute("SELECT * FROM usuarios ORDER BY nome ASC")
+    usuarios = cursor.fetchall()
+    if not usuarios:
+        print("\nNão há usuários no banco de dados!")
+        return
+    id_user = input("Digite um id de um usuário existente: ")
+    if not cursor.execute('SELECT nome FROM USUARIOS WHERE id = ?', [id_user]).fetchall():
+        print('Usuário não encontrado!')
+        return
+    print('Achou')
+    conexao.commit()
 while True:
     print(f'''
 {'-'*50}SISTEMA DE USUÁRIOS{'-'*50}
@@ -146,7 +159,8 @@ while True:
     2.2 — Mostrar maiores de idade
 🟡 3 — Editar usuário
 🔴 4 — Remover usuário
-❌ 5 — Sair\n''')
+🟢 5 — Adicionar pedido
+❌ 9 — Sair\n''')
     try:
         opcao = float(input("Digite uma das opções anteriores: "))
         match opcao:
@@ -163,6 +177,8 @@ while True:
             case 4:
                 remove_users()
             case 5:
+                add_pedido()
+            case 9:
                 print('Saindo do programa...\n')
                 break
             case _:
