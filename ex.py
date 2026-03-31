@@ -146,8 +146,14 @@ def add_pedido():
     if not cursor.execute('SELECT nome FROM USUARIOS WHERE id = ?', [id_user]).fetchall():
         print('Usuário não encontrado!')
         return
-    print('Achou')
+    descrição_produto = input("Digite uma descrição/nome do produto: ")
+    valor_produto = float(input('Digite o valor do produto: '))
+    if not descrição_produto or not valor_produto:
+        print("Os campos de descrição do produto e valor não podem ficar vazios!")
+        return
+    cursor.execute('''INSERT INTO pedidos (descricao, valor, usuario_id) VALUES (?,?,?)''', (descrição_produto,valor_produto,id_user))
     conexao.commit()
+    print('Produto salvo com sucesso!')
 while True:
     print(f'''
 {'-'*50}SISTEMA DE USUÁRIOS{'-'*50}
