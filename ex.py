@@ -154,6 +154,24 @@ def add_pedido():
     cursor.execute('''INSERT INTO pedidos (descricao, valor, usuario_id) VALUES (?,?,?)''', (descrição_produto,valor_produto,id_user))
     conexao.commit()
     print('Produto salvo com sucesso!')
+def ver_produtos_por_pessoas():
+    cursor.execute('SELECT usuarios.nome, pedidos.descricao FROM usuarios INNER JOIN pedidos ON usuarios.id = pedidos.usuario_id')
+    dados = cursor.fetchall()
+    if not dados:
+        print('Não há produtos que já foram cadastrados!')
+        return
+    detalhes = {}
+    for item in dados:
+        cliente,produto = item
+        if cliente in detalhes.keys():
+            detalhes[cliente] += f', {produto}'
+        else:
+            detalhes[cliente] = produto
+    print('Produtos por usuário:')
+    for item in detalhes.items():
+        cliente_nome,produtos = item
+        print(f'Nome do cliente: {cliente_nome}\nPedidos do cliente: {produtos}\n{'='*50}')
+    conexao.commit()
 while True:
     print(f'''
 {'-'*50}SISTEMA DE USUÁRIOS{'-'*50}
@@ -166,6 +184,7 @@ while True:
 🟡 3 — Editar usuário
 🔴 4 — Remover usuário
 🟢 5 — Adicionar pedido
+🔵 6 — Exibir usuários com seus pedidos
 ❌ 9 — Sair\n''')
     try:
         opcao = float(input("Digite uma das opções anteriores: "))
@@ -184,6 +203,8 @@ while True:
                 remove_users()
             case 5:
                 add_pedido()
+            case 6:
+                ver_produtos_por_pessoas()
             case 9:
                 print('Saindo do programa...\n')
                 break
