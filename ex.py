@@ -172,6 +172,37 @@ def ver_produtos_por_pessoas():
         cliente_nome,produtos = item
         print(f'Nome do cliente: {cliente_nome}\nPedidos do cliente: {produtos}\n{'='*50}')
     conexao.commit()
+def exibir_produtos_de_um_usuario():
+    cursor.execute("SELECT * FROM usuarios ORDER BY nome ASC")
+    usuarios = cursor.fetchall()
+    if not usuarios:
+        print("\nNão há usuários no banco de dados!")
+        return
+    cursor.execute('SELECT usuarios.nome, pedidos.descricao FROM usuarios INNER JOIN pedidos ON usuarios.id = pedidos.usuario_id')
+    dados = cursor.fetchall()
+    if not dados:
+        print('Não há produtos que já foram cadastrados!')
+        return
+    usuario_id = input('Digite um id de um usuário pra ver seus pedidos: ')
+    cursor.execute('''SELECT usuarios.nome, pedidos.descricao 
+FROM usuarios 
+INNER JOIN pedidos ON usuarios.id = pedidos.usuario_id
+WHERE usuarios.id = ?''', [usuario_id])
+    resposta = cursor.fetchall()
+    if not resposta:
+        print("Id não encontrado!")
+        return
+    r = {}
+    for resposta in resposta:
+        nome, pedido = resposta
+        if nome in r.keys():
+            r[nome] += f', {pedido}'
+        else:
+            r[nome] = pedido
+    print(f'''Exibindo produtos do usuário
+Nome: {nome}
+Produtos: {r[nome]}''')
+    conexao.commit()
 while True:
     print(f'''
 {'-'*50}SISTEMA DE USUÁRIOS{'-'*50}
@@ -185,6 +216,7 @@ while True:
 🔴 4 — Remover usuário
 🟢 5 — Adicionar pedido
 🔵 6 — Exibir usuários com seus pedidos
+🟡 7 — Exibir pedidos de um usuário específico
 ❌ 9 — Sair\n''')
     try:
         opcao = float(input("Digite uma das opções anteriores: "))
@@ -205,6 +237,8 @@ while True:
                 add_pedido()
             case 6:
                 ver_produtos_por_pessoas()
+            case 7:
+                exibir_produtos_de_um_usuario()
             case 9:
                 print('Saindo do programa...\n')
                 break
